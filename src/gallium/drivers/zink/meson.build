@@ -28,6 +28,7 @@ files_libzink = files(
   'zink_synchronization.cpp',
 )
 
+
 zink_device_info = custom_target(
   'zink_device_info.c',
   input : ['zink_device_info.py'],
@@ -88,6 +89,9 @@ if host_machine.system() == 'darwin'
 
 endif
 
+libdricore = cc.find_library('dricore', required: false)
+libmesa_dri = cc.find_library('mesa_dri', required: false)
+
 libzink = static_library(
   'zink',
   [files_libzink, zink_device_info, zink_instance, zink_nir_algebraic_c, vk_dispatch_table],
@@ -96,7 +100,8 @@ libzink = static_library(
   link_args : [ld_args_build_id],
   dependencies: [
     idep_nir_headers, idep_mesautil, idep_vulkan_util_headers,
-    idep_vulkan_wsi_defines, idep_vulkan_util, dep_libdrm, vulkan_wsi_deps
+    idep_vulkan_wsi_defines, idep_vulkan_util, dep_libdrm, vulkan_wsi_deps,
+    libdricore, libmesa_dri
   ],
   c_args: zink_c_args,
 )
@@ -104,7 +109,7 @@ libzink = static_library(
 driver_zink = declare_dependency(
   compile_args : '-DGALLIUM_ZINK',
   link_with : [libzink],
-)
+) 
 
 if with_tests
   test(
