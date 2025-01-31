@@ -25,7 +25,16 @@
 import argparse
 import os
 
+import shutil
+ 
+def link(src, dest):
+    shutil.copyfile(src, dest)
+ 
+def unlink(src):
+    os.remove(src)
 
+os.link = link
+os.unlink = unlink
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('megadriver')
